@@ -11,7 +11,8 @@
   #define motorin2 8
   #define motorin3 12
   #define motorin4 13
-  const int IRsensor=2;
+  const int IRsensor=3;
+  const int switchpin=A0;
   //#define switchpin
 
   volatile bool reached_white=false;
@@ -46,7 +47,7 @@
     pinMode(motorin2, OUTPUT);
     pinMode(motorin3, OUTPUT);
     pinMode(motorin4, OUTPUT);
-    //pinMode(sweitchpin,INPUT_PULLUP);
+    pinMode(switchpin,INPUT_PULLUP);
     pinMode(IRsensor,INPUT);
     attachInterrupt(digitalPinToInterrupt(IRsensor), whitedetected, RISING);
     Serial.begin(9600);
@@ -254,6 +255,7 @@ void whitedetected(){
     double leftlength= distancecal(trigerleft,echoleft) ;
     double frontlength= distancecal(trigerfront,echofront) ;
     double rightlength= distancecal(trigerright,echoright) ;
+    int switchstate=digitalRead(switchpin);
     //int IRvalue=digitalRead(IRpin);
     //int switchstate=digitalRead(switchpin);
 
@@ -274,7 +276,12 @@ void whitedetected(){
     //lefthandmethod(leftlength,frontlength,rightlength);
     //righthandmethod(leftlength,frontlength,rightlength);
     if(!reached_white){
+      if(switchstate=HIGH){
       lefthandmethod(leftlength,frontlength,rightlength);
+      }
+      else{
+       righthandmethod(leftlength,frontlength,rightlength); 
+      }
     }
     else{
       stop();
